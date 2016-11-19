@@ -1,0 +1,33 @@
+[% start_year=2016 %]
+[% MACRO example(file) BLOCK %]
+[%- pl =  file _ ".pl" -%]
+[%- out = file _ "-out.txt" -%]
+[% INCLUDE $pl | xtidy %]
+
+produces output
+
+[% INCLUDE $out | xtidy %]
+
+(This example is included as L<F<[% pl %]>|https://api.metacpan.org/source/BKB/JSON-Repair-[% version %]/examples/[% pl %]> in the distribution.)
+[% END %]
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Repair - abstract here.
+
+=head1 SYNOPSIS
+
+    use JSON::Repair;
+
+=head1 VERSION
+
+This documents version [% version %] of JSON::Repair corresponding to git
+commit [% commit.commit %] released on [% commit.date %].
+
+=head1 DESCRIPTION
+
+=head1 FUNCTIONS
+
+=cut
+[% INCLUDE "author" %]
