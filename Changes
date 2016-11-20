@@ -1,8 +1,10 @@
 Revision history for Perl module JSON::Repair
 
-0.02
+0.02 2016-11-20
 
 - Remove hash comments like # this
+- Fix numbers as well
+- Use new "check" method of JSON::Parse
 
 0.01 2016-11-20
 

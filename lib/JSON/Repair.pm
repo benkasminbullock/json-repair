@@ -10,7 +10,7 @@ use Carp;
 use JSON::Parse;
 use C::Tokenize '$comment_re';
 use 5.014;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub repair_json
 {
@@ -19,10 +19,13 @@ sub repair_json
     my ($broken, %options) = @_;
     my $verbose = $options{verbose};
     my $output = $broken;
-    my $count;
     while (1) {
+	# Try various repairs.  This continues until the JSON is
+	# valid, or none of the repairs have worked. After a
+	# successful repair, "next;" should be used. Falling through
+	# to the end of the loop causes an exit with an error message.
 	eval {
-	    $jp->run ($output);
+	    $jp->check ($output);
 	};
 	if (! $@) {
 	    last;
@@ -155,6 +158,24 @@ sub repair_json
 		    next;
 		}
 	    }
+	    # Add a zero to a fraction
+	    if ($bad_char eq '.' && $remaining =~ /^[0-9]+/) {
+		$output = $previous . "0." . $remaining;
+		next;
+	    }
+	    # Delete a leading zero on a number.
+	    if ($type eq 'number') {
+		if ($previous =~ /0$/ && $remaining =~ /^[0-9]+/) {
+		    $previous =~ s/0$//;
+		    $output = $previous . $bad_char . $remaining;
+#		    print "$output\n";
+		    next;
+		}
+		if ($bad_char =~ /[eE]/ && $previous =~ /\.$/) {
+		    $output = $previous . "0" . $bad_char . $remaining;
+		    next;
+		}
+	    }
 #	    print "$output\n";
 	    warn "Could not handle unexpected character '$bad_char' in $type\n";
 	    if ($verbose) {
@@ -188,19 +209,17 @@ sub repair_json
 		next;
 	    }
 	    else {
+		# Cannot really get an unexpected end of a number
+		# since it has no end marker, nor of the initial
+		# state. That leaves the case of literals, which might
+		# come to an unexpected end like 'tru' or something.
 		warn "Unhandled unexpected end of input in $type";
 	    }
 	}
 	if ($verbose) {
 	    print "$output\n";
 	}
-	warn "Unhandled error $error";
-	$count++;
-	if ($count > 2) {
-	    carp "Repair failed";
-	    $output = undef;
-	    last;
-	}
+	carp "Repair failed: unhandled error $error";
     }
     return $output;
 }

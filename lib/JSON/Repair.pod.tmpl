@@ -87,13 +87,21 @@ This example demonstrates removing hash comments:
 
 The facility to remove hash comments was added in 0.02 of the module.
 
+=item Sort out broken numbers
+
+JSON disallows various kinds of numbers. This example demonstrates
+these repairs.
+
+[% example('numbers') %]
+
+Currently this module strips leading zeros without converting to
+octal, and it doesn't attempt to repair hexadecimal numbers.
+
 =back
 
 =head2 Planned repairs
 
 =over
-
-=item Sort out broken numbers
 
 =item Make sane error messages
 
