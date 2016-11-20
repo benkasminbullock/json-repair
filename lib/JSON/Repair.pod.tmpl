@@ -14,20 +14,114 @@ produces output
 
 =head1 NAME
 
-JSON::Repair - abstract here.
+JSON::Repair - reformat JSON to strict compliance
 
 =head1 SYNOPSIS
 
-    use JSON::Repair;
+    use JSON::Repair 'repair_json';
 
 =head1 VERSION
 
 This documents version [% version %] of JSON::Repair corresponding to git
-commit [% commit.commit %] released on [% commit.date %].
+commit L<[% commit.commit %]|[% repo %]/commit/[% commit.commit %]> released on [% commit.date %].
 
 =head1 DESCRIPTION
 
+The module has some heuristics with which it tries to guess what kind
+of "relaxed" JSON might have been used and then convert those into
+strictly compliant JSON.
+
 =head1 FUNCTIONS
+
+=head2 repair_json
+
+    my $repaired = repair_json ($json, %options);
+
+This alters its input in various ways to make it compliant with the
+JSON specification, or prints an error message if C<$json> cannot be
+repaired, and returns the undefined value.
+
+Valid options are
+
+=over
+
+=item verbose
+
+Print messages about the operations applied
+
+=back
+
+=head1 REPAIRS APPLIED
+
+=over
+
+=item Strip trailing commas
+
+[% example("trailing-commas") %]
+
+=item Change single quotes to double quotes in keys
+
+[% example("single-quotes") %]
+
+=item Add missing object-end, string-end and array-end markers
+
+[% example("missing-ends") %]
+
+=item Add quotes to unquoted keys
+
+[% example("unquoted-keys") %]
+
+=item Add missing commas to objects and arrays
+
+[% example('missing-commas') %]
+
+=item Remove comments
+
+This example uses the example from the synopsis of L<JSON::Relaxed>:
+
+[% example('comments') %]
+
+=back
+
+=head2 Planned repairs
+
+=over
+
+=item Sort out broken numbers
+
+=back
+
+=head1 EXPORTS
+
+L</repair_json> is exported on demand. The tag ":all" exports all functions.
+
+    use JSON::Repair ':all';
+
+=head1 DEPENDENCIES
+
+=over
+
+=item JSON::Parse
+
+This module relies on L<JSON::Parse/diagnostics_hash> to find the
+errors in the input. Most of the work of the module is done by
+JSON::Parse's diagnostics, and then this applies a few heuristic rules
+to guess what might have caused the error.
+
+=item C::Tokenize
+
+This module uses the regular expression for C comments from L<C::Tokenize>.
+
+=item Perl 5.14
+
+Unfortunately L<JSON::Parse/diagnostics_hash> is only available for
+Perl 5.14 or later.
+
+=back
+
+=head1 SEE ALSO
+
+L<JSON::Parse/SEE ALSO> for a list of JSON modules.
 
 =cut
 [% INCLUDE "author" %]

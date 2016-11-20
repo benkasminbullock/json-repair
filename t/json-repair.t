@@ -1,11 +1,22 @@
-# This is a test for module JSON::Repair.
-
 use warnings;
 use strict;
+use utf8;
+use FindBin '$Bin';
 use Test::More;
-use JSON::Repair;
+my $builder = Test::More->builder;
+binmode $builder->output,         ":utf8";
+binmode $builder->failure_output, ":utf8";
+binmode $builder->todo_output,    ":utf8";
+binmode STDOUT, ":encoding(utf8)";
+binmode STDERR, ":encoding(utf8)";
+use JSON::Repair 'repair_json';
 
+my $repaired = repair_json ("{'fantastic':\"pump\",", verbose => undef);
+note ($repaired);
+like ($repaired, qr/"fantastic"/, "Converted single to double quotes");
+unlike ($repaired, qr/,/, "Removed trailing comma");
+like ($repaired, qr/\}$/, "Added }");
+my $repaired_array = repair_json ('[1,2,3,');
+like ($repaired_array, qr/]\s*$/, "Added ] to array");
+unlike ($repaired_array, qr/,\s*]\s*$/, "Removed trailing comma from array");
 done_testing ();
-# Local variables:
-# mode: perl
-# End:

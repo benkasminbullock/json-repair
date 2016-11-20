@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Template;
 use FindBin '$Bin';
-use Perl::Build qw/get_version get_commit/;
+use Perl::Build qw/get_info get_commit/;
 use Perl::Build::Pod ':all';
 use Deploy qw/do_system older/;
 use Getopt::Long;
@@ -19,8 +19,9 @@ my %pbv = (
     base => $Bin,
     verbose => $verbose,
 );
-my $version = get_version (%pbv);
+#my $version = get_version (%pbv);
 my $commit = get_commit (%pbv);
+my $info = get_info (%pbv);
 # Names of the input and output files containing the documentation.
 
 my $pod = 'Repair.pod';
@@ -30,8 +31,9 @@ my $output = "$Bin/lib/JSON/$pod";
 # Template toolkit variable holder
 
 my %vars = (
-    version => $version,
+    version => $info->{version},
     commit => $commit,
+    repo => $info->{repo},
 );
 
 my $tt = Template->new (
@@ -69,7 +71,7 @@ exit;
 
 sub usage
 {
-print <<USAGEEOF;
+    print <<USAGEEOF;
 --verbose
 --force
 USAGEEOF

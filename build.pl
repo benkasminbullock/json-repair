@@ -5,5 +5,6 @@ use FindBin '$Bin';
 use Perl::Build;
 perl_build (
     make_pod => "$Bin/make-pod.pl",
+    clean => "$Bin/clean.pl",
 );
 exit;
