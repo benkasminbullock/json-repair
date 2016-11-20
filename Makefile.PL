@@ -32,5 +32,8 @@ WriteMakefile (
 #	    homepage => 'http://',
         },
     },
+    EXE_FILES => [
+	'script/repairjson',
+    ],
     MIN_PERL_VERSION => '5.014001',
 );

@@ -1,5 +1,9 @@
 Revision history for Perl module JSON::Repair
 
+0.02
+
+- Remove hash comments like # this
+
 0.01 2016-11-20
 
 - Initial version

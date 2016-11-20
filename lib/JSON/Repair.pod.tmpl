@@ -81,6 +81,12 @@ This example uses the example from the synopsis of L<JSON::Relaxed>:
 
 [% example('comments') %]
 
+This example demonstrates removing hash comments:
+
+[% example('hash-comments') %]
+
+The facility to remove hash comments was added in 0.02 of the module.
+
 =back
 
 =head2 Planned repairs
@@ -88,6 +94,11 @@ This example uses the example from the synopsis of L<JSON::Relaxed>:
 =over
 
 =item Sort out broken numbers
+
+=item Make sane error messages
+
+Make sane error messages for unparseable formats like hjson and
+jsony. See also L</BUGS>.
 
 =back
 
@@ -119,9 +130,29 @@ Perl 5.14 or later.
 
 =back
 
+=head1 SCRIPT
+
+A script F<repairjson> is installed with the module which runs
+L</repair_json> on the files given as arguments:
+
+    repairjson file1.json file2.json
+
+The output is the repaired JSON.
+
+The script was added in version 0.02 of the module.
+
 =head1 SEE ALSO
 
-L<JSON::Parse/SEE ALSO> for a list of JSON modules.
+See the section L<JSON::Parse/SEE ALSO> for a list of JSON modules.
+
+=head1 BUGS
+
+It is impossible to unambiguously simultaneously convert all the
+"JSON-like" formats like JSONY and hjson into JSON. The people who
+designed these formats have made decisions about what newlines and
+other characters mean which are mutually contradictory and
+incompatible. If you need more than this module provides, consider
+writing your own module based on this as an example.
 
 =cut
 [% INCLUDE "author" %]

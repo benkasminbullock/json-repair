@@ -81,17 +81,32 @@ sub repair_json
 		}
 	    }
 	    if (($type eq 'object' || $type eq 'array' ||
-		 $type eq 'initial state') && $bad_char eq '/') {
-		if ($verbose) {
-		    print "Comments in object or array?\n";
-		}
-		$remaining = $bad_char . $remaining;
-		if ($remaining =~ s/^($comment_re)//) {
+		 $type eq 'initial state')) {
+		# Handle comments in these states.
+		if ($bad_char eq '/') {
 		    if ($verbose) {
-			print "Deleted comment $1.\n";
+			print "C-style comments in object or array?\n";
 		    }
-		    $output = $previous . $remaining;
-		    next;
+		    $remaining = $bad_char . $remaining;
+		    if ($remaining =~ s/^($comment_re)//) {
+			if ($verbose) {
+			    print "Deleted comment $1.\n";
+			}
+			$output = $previous . $remaining;
+			next;
+		    }
+		}
+		if ($bad_char eq '#') {
+		    if ($verbose) {
+			print "Hash comments in object or array?\n";
+		    }
+		    if ($remaining =~ s/^(.*)\n//) {
+			if ($verbose) {
+			    print "Deleted comment $1.\n";
+			}
+			$output = $previous . $remaining;
+			next;
+		    }
 		}
 	    }
 	    if (($type eq 'object' || $type eq 'array') &&
@@ -109,17 +124,26 @@ sub repair_json
 		$output = $previous . $join . $remaining;
 		next;
 	    }
-	    if ($type eq 'object' && $valid_bytes->[ord ('"')]
-		&& $remaining =~ /:/) {
+	    if ($type eq 'object' && $valid_bytes->[ord ('"')]) {
 		if ($verbose) {
-		    print "Unquoted key in object?\n";
+		    print "Unquoted key or value in object?\n";
 		}
-		if ($remaining =~ s/(^[^\}\]:,"]*)(\s*):/$1"$2:/) {
+		if ($remaining =~ s/(^[^\}\]:,\n\r"]*)(\s*):/$1"$2:/) {
 		    if ($verbose) {
 			print "Adding quotes to key '$bad_char$1'\n";
 		    }
 		    $output = $previous . '"' . $bad_char . $remaining;
 		    next;
+		}
+		if ($previous =~ /:\s*$/) {
+		    $remaining = $bad_char . $remaining;
+		    if ($remaining =~ s/^(.*)\n/"$1"\n/) {
+			if ($verbose) {
+			    print "Adding quotes to unquoted value '$1'.\n";
+			    $output = $previous . $remaining;
+			    next;
+			}
+		    }
 		}
 	    }
 	    if ($type eq 'string') {
@@ -166,6 +190,9 @@ sub repair_json
 	    else {
 		warn "Unhandled unexpected end of input in $type";
 	    }
+	}
+	if ($verbose) {
+	    print "$output\n";
 	}
 	warn "Unhandled error $error";
 	$count++;
