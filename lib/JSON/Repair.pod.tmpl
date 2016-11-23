@@ -22,8 +22,9 @@ JSON::Repair - reformat JSON to strict compliance
 
 =head1 VERSION
 
-This documents version [% version %] of JSON::Repair corresponding to git
-commit L<[% commit.commit %]|[% repo %]/commit/[% commit.commit %]> released on [% commit.date %].
+This documents version [% version %] of JSON::Repair corresponding to
+git commit L<[% commit.commit %]|[% repo %]/commit/[% commit.commit
+%]> released on [% commit.date %].
 
 =head1 DESCRIPTION
 
@@ -41,17 +42,7 @@ This alters its input in various ways to make it compliant with the
 JSON specification, or prints an error message if C<$json> cannot be
 repaired, and returns the undefined value.
 
-Valid options are
-
-=over
-
-=item verbose
-
-Print messages about the operations applied
-
-=back
-
-=head1 REPAIRS APPLIED
+=head3 Repairs applied
 
 =over
 
@@ -85,28 +76,36 @@ This example demonstrates removing hash comments:
 
 [% example('hash-comments') %]
 
-The facility to remove hash comments was added in 0.02 of the module.
+The facility to remove hash comments was added in version 0.02 of the
+module.
 
 =item Sort out broken numbers
 
-JSON disallows various kinds of numbers. This example demonstrates
-these repairs.
+JSON disallows various kinds of numbers such as decimals without a
+leading zero like .123, or decimals with an exponent but without a
+fraction, like 1.e9. JSON::Repair adds the necessary digits to make
+them parseable. It also strips leading zeros, as in 0123.
 
 [% example('numbers') %]
 
-Currently this module strips leading zeros without converting to
-octal, and it doesn't attempt to repair hexadecimal numbers.
+JSON::Repair strips leading zeros like 0123 without converting the
+result to octal (base 8). It doesn't attempt to repair hexadecimal
+(base 16) numbers.
+
+The facility to reinterpret numbers was added in version 0.02 of the
+module.
 
 =back
 
-=head2 Planned repairs
+=head3 Options
+
+Valid options are
 
 =over
 
-=item Make sane error messages
+=item verbose
 
-Make sane error messages for unparseable formats like hjson and
-jsony. See also L</BUGS>.
+Print messages about the operations applied
 
 =back
 
@@ -151,16 +150,8 @@ The script was added in version 0.02 of the module.
 
 =head1 SEE ALSO
 
-See the section L<JSON::Parse/SEE ALSO> for a list of JSON modules.
-
-=head1 BUGS
-
-It is impossible to unambiguously simultaneously convert all the
-"JSON-like" formats like JSONY and hjson into JSON. The people who
-designed these formats have made decisions about what newlines and
-other characters mean which are mutually contradictory and
-incompatible. If you need more than this module provides, consider
-writing your own module based on this as an example.
+See the section L<JSON::Parse/SEE ALSO> for a comprehensive list of
+JSON modules on CPAN and more information about JSON itself.
 
 =cut
 [% INCLUDE "author" %]

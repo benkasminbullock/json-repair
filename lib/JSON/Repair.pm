@@ -7,16 +7,16 @@ use strict;
 use utf8;
 use FindBin '$Bin';
 use Carp;
-use JSON::Parse;
-use C::Tokenize '$comment_re';
 use 5.014;
-our $VERSION = '0.02';
+use JSON::Parse '0.48';
+use C::Tokenize '$comment_re';
+our $VERSION = '0.03';
 
 sub repair_json
 {
+    my ($broken, %options) = @_;
     my $jp = JSON::Parse->new ();
     $jp->diagnostics_hash (1);
-    my ($broken, %options) = @_;
     my $verbose = $options{verbose};
     my $output = $broken;
     while (1) {
