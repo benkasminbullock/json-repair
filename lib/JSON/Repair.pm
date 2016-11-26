@@ -50,9 +50,17 @@ sub repair_json
 	    # Everything after the bad byte.
 	    my $remaining = substr ($output, $bad_pos);
 	    if ($bad_char eq "'" && $valid_bytes->[ord ('"')]) {
-		# Substitute a ': in the remaining stuff as well, if
-		# there is one, up to a comma or colon.
-		$remaining =~ s/^([^,:]*)'(\s*[,:])/$1"$2/;
+		my $string;
+		# Substitute a ' in the remaining stuff, if there is
+		# one, up to a comma or colon or an end-of marker.
+		if ($remaining =~ s/^([^,:\]\}]*)'(\s*[,:\]\}])/$1"$2/) {
+		    my $string = $1;
+		    if ($string =~ /"/) {
+			my $quotedstring = $string;
+			$quotedstring =~ s/"/\\"/g;
+			$remaining =~ s/^\Q$string/$quotedstring/;
+		    }
+		}
 		$output = $previous . '"' . $remaining;
 		if ($verbose) {
 		    print "Changing single to double quote.\n";

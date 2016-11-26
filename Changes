@@ -3,6 +3,8 @@ Revision history for Perl module JSON::Repair
 0.04 2016-11-26
 
 - Escape unprintable and whitespace characters in strings
+- Escape double quotes found within single quotes
+- Turn empty input into an empty string
 
 0.03 2016-11-23
 
