@@ -2,4 +2,4 @@
 use warnings;
 use strict;
 use Deploy 'do_system';
-do_system ("rm examples/*-out.txt");
+do_system ("rm -f examples/*-out.txt");

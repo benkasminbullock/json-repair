@@ -10,7 +10,7 @@ use Carp;
 use 5.014;
 use JSON::Parse '0.48';
 use C::Tokenize '$comment_re';
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub repair_json
 {
@@ -150,11 +150,9 @@ sub repair_json
 		}
 	    }
 	    if ($type eq 'string') {
-		if ($bad_char eq "\n") {
-		    $output = $previous . "\\n" . $remaining;
-		    if ($verbose) {
-			print "Converting newline to escape.\n";
-		    }
+		if ($bad_byte < 0x20) {
+		    $bad_char = json_escape ($bad_char);
+		    $output = $previous . $bad_char . $remaining;
 		    next;
 		}
 	    }
@@ -216,10 +214,18 @@ sub repair_json
 		warn "Unhandled unexpected end of input in $type";
 	    }
 	}
+	elsif ($error eq 'Empty input') {
+	    $output = '""';
+	    if ($verbose) {
+		print "Changing empty input to empty string \"\".\n";
+	    }
+	    next;
+	}
 	if ($verbose) {
 	    print "$output\n";
 	}
 	carp "Repair failed: unhandled error $error";
+	last;
     }
     return $output;
 }
@@ -233,6 +239,21 @@ sub print_valid_bytes
 	    print "OK: '",chr ($i),"'\n";
 	}
     }
+}
+
+# Filched from JSON::Create::PP
+
+sub json_escape
+{
+    my ($input) = @_;
+    $input =~ s/("|\\)/\\$1/g;
+    $input =~ s/\x08/\\b/g;
+    $input =~ s/\f/\\f/g;
+    $input =~ s/\n/\\n/g;
+    $input =~ s/\r/\\r/g;
+    $input =~ s/\t/\\t/g;
+    $input =~ s/([\x00-\x1f])/sprintf ("\\u%04x", ord ($1))/ge;
+    return $input;
 }
 
 1;

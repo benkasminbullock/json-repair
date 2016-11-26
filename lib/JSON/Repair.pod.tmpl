@@ -95,6 +95,20 @@ result to octal (base 8). It doesn't attempt to repair hexadecimal
 The facility to reinterpret numbers was added in version 0.02 of the
 module.
 
+=item Convert unprintable and whitespace characters to escapes in strings
+
+Strings containing unprintable ASCII characters and some kinds of
+whitespace are not allowed in JSON. This converts them into valid
+escapes.
+
+[% example('strings') %]
+
+This was added in version 0.04 of the module.
+
+=item Empty inputs are converted into the empty string
+
+Completely empty inputs are converted into C<"">.
+
 =back
 
 =head3 Options

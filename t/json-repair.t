@@ -30,4 +30,16 @@ ok ($n->[0] && abs ($n->[0] - 0.123) < $eps, "repaired .123");
 ok ($n->[1] && abs ($n->[1] - 123) < $eps, "repaired 0123");
 ok ($n->[2] && abs ($n->[2] - 1e9) < $eps, "repaired 1.e9");
 
+my $badstring = '"' . chr (9) . chr (0) . "\n" . '"';
+#print "$badstring\n";
+my $goodstring;
+$goodstring = repair_json ($badstring);
+like ($goodstring, qr/"\\t/, "Tab inserted");
+like ($goodstring, qr/\\u0000/, "Unicode escape inserted");
+like ($goodstring, qr/\\n"/, "Newline inserted");
+
+my $empty = '';
+my $notempty = repair_json ($empty);
+is ($notempty, '""', "Repaired empty input to an empty string");
+
 done_testing ();
