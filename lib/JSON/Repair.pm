@@ -8,7 +8,7 @@ use utf8;
 use FindBin '$Bin';
 use Carp;
 use 5.014;
-use JSON::Parse '0.48';
+use JSON::Parse '0.49';
 use C::Tokenize '$comment_re';
 our $VERSION = '0.04';
 
@@ -16,6 +16,7 @@ sub repair_json
 {
     my ($broken, %options) = @_;
     my $jp = JSON::Parse->new ();
+    # Request a hash response from $jp when there is an error.
     $jp->diagnostics_hash (1);
     my $verbose = $options{verbose};
     my $output = $broken;
@@ -23,7 +24,8 @@ sub repair_json
 	# Try various repairs.  This continues until the JSON is
 	# valid, or none of the repairs have worked. After a
 	# successful repair, "next;" should be used. Falling through
-	# to the end of the loop causes an exit with an error message.
+	# to the end of the while loop which started above causes an
+	# exit with an error message.
 	eval {
 	    $jp->check ($output);
 	};
@@ -118,6 +120,13 @@ sub repair_json
 			$output = $previous . $remaining;
 			next;
 		    }
+		}
+		if ($type eq 'initial state' && $previous !~ /^\s+$/) {
+		    if ($verbose) {
+			print "Deleted trailing garbage $remaining\n";
+		    }
+		    $output = $previous;
+		    next;
 		}
 	    }
 	    if (($type eq 'object' || $type eq 'array') &&

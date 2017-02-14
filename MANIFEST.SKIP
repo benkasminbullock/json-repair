@@ -21,7 +21,9 @@ MYMETA..*
 # Template for building pod file.
 ^lib/JSON/Repair.pod.tmpl$
 # Don't include the script which makes the POD
-^make-pod.pl$
+^make-pod\.pl$
+# Cleans examples directory
+^clean\.pl$
 # Don't include the outputs from running the examples
 ^examples/.*-out\.txt$
 # Author tests

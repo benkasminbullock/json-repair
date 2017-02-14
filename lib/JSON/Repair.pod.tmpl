@@ -64,9 +64,15 @@ repaired, and returns the undefined value.
 
 =item Add missing commas to objects and arrays
 
+The module can add missing commas between the end of object or array
+values.
+
 [% example('missing-commas') %]
 
 =item Remove comments
+
+The module removes C and C++ comments and hash comments (Perl-style
+comments) from JSON.
 
 This example uses the example from the synopsis of L<JSON::Relaxed>:
 
@@ -77,14 +83,15 @@ This example demonstrates removing hash comments:
 [% example('hash-comments') %]
 
 The facility to remove hash comments was added in version 0.02 of the
-module.
+module. It currently uses L</C::Tokenize> for the C/C++ comment
+regexes.
 
 =item Sort out broken numbers
 
-JSON disallows various kinds of numbers such as decimals without a
-leading zero like .123, or decimals with an exponent but without a
-fraction, like 1.e9. JSON::Repair adds the necessary digits to make
-them parseable. It also strips leading zeros, as in 0123.
+JSON does not allow various kinds of numbers, such as decimals without
+a leading zero, like .123, decimals with an exponent but without a
+fraction, like 1.e9, or integers with a leading zero. JSON::Repair
+adds or removes digits to make them parseable.
 
 [% example('numbers') %]
 
@@ -119,7 +126,12 @@ Valid options are
 
 =item verbose
 
-Print messages about the operations applied
+    my $okjson = repair_json ($json, verbose => 1);
+
+Give a true value to make the module print messages about the
+operations applied. This facility is largely for debugging the module
+itself. The messages may be poorly formatted and opaque, and are not
+guaranteed to be the same in future versions of the module.
 
 =back
 
@@ -147,7 +159,9 @@ This module uses the regular expression for C comments from L<C::Tokenize>.
 =item Perl 5.14
 
 Unfortunately L<JSON::Parse/diagnostics_hash> is only available for
-Perl 5.14 or later.
+Perl 5.14 or later, because it relies on L<perlapi/croak_sv>, which
+was introduced in Perl 5.14. I'm not sure if there is a way to get the
+same behaviour with earlier versions of Perl.
 
 =back
 

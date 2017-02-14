@@ -10,7 +10,7 @@ binmode $builder->todo_output,    ":utf8";
 binmode STDOUT, ":encoding(utf8)";
 binmode STDERR, ":encoding(utf8)";
 use JSON::Repair 'repair_json';
-use JSON::Parse 'parse_json';
+use JSON::Parse qw/parse_json valid_json/;
 
 my $repaired = repair_json ("{'fantastic':\"pump\",", verbose => undef);
 #note ($repaired);
@@ -45,5 +45,9 @@ like ($goodstring, qr/\\n"/, "Newline inserted");
 my $empty = '';
 my $notempty = repair_json ($empty);
 is ($notempty, '""', "Repaired empty input to an empty string");
+
+my $trailing = '{"a":"b"}guff';
+my $notrailing = repair_json ($trailing);#, verbose => 1);
+ok (valid_json ($notrailing), "Removed trailing chars from JSON");
 
 done_testing ();
