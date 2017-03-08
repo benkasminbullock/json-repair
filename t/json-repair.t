@@ -50,4 +50,9 @@ my $trailing = '{"a":"b"}guff';
 my $notrailing = repair_json ($trailing);#, verbose => 1);
 ok (valid_json ($notrailing), "Removed trailing chars from JSON");
 
+my $invalid_string = '["	<- tab"]';
+my $valid_string = repair_json ($invalid_string);
+like ($valid_string, qr/\\t<- tab/, "convert tab to \\t");
+
+
 done_testing ();

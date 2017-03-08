@@ -5,7 +5,6 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 use warnings;
 use strict;
 use utf8;
-use FindBin '$Bin';
 use Carp;
 use 5.014;
 use JSON::Parse '0.49';

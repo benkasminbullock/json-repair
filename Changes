@@ -1,5 +1,9 @@
 Revision history for Perl module JSON::Repair
 
+0.05
+
+- Delete trailing garbage after a valid input
+
 0.04 2016-11-26
 
 - Escape unprintable and whitespace characters in strings
