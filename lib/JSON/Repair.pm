@@ -6,10 +6,14 @@ use warnings;
 use strict;
 use utf8;
 use Carp;
+
+# This Perl version is required because of hashes as errors from
+# JSON::Parse.
+
 use 5.014;
 use JSON::Parse '0.49';
 use C::Tokenize '$comment_re';
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub repair_json
 {
