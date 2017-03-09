@@ -33,20 +33,6 @@ commas, comments, or strings containing tab characters or newlines,
 this module uses heuristics to convert these into strictly compliant
 JSON.
 
-It's very likely that a non-compliant JSON format cannot be handled by
-this module, or that the changes that need to be made to fix one
-variety of JSON-like format are incompatible with the changes that
-need to be made to fix another, no comprehensive solution is
-possible. For example, it would be impossible to make this module
-convert both L</HJSON> and L</YAML> into compliant JSON without
-breaking other parts of it.
-
-Since it is unfeasible to meaningfully convert every possible list of
-bytes into compliant JSON, this should be regarded as an example which
-demonstrates the use of the diagnostics provided by the L<JSON::Parse>
-module to repair broken JSON inputs, rather than a general solution
-covering all possible cases.
-
 =head1 FUNCTIONS
 
 =head2 repair_json
@@ -148,6 +134,10 @@ operations applied. This facility is largely for debugging the module
 itself. The messages may be poorly formatted and opaque, and are not
 guaranteed to be the same in future versions of the module.
 
+Here is the output of the synopsis run with the C<verbose> option:
+
+[% example("synopsis-verbose") %]
+
 =back
 
 =head1 EXPORTS
@@ -163,9 +153,11 @@ L</repair_json> is exported on demand. The tag ":all" exports all functions.
 =item JSON::Parse
 
 This module relies on L<JSON::Parse/diagnostics_hash> to find the
-errors in the input. Most of the work of the module is done by
-JSON::Parse's diagnostics, and then this applies a few heuristic rules
-to guess what might have caused the error.
+errors in the input. Most of the work of JSON::Repair is actually done
+by JSON::Parse's diagnostics, and then JSON::Repair applies a few
+heuristic rules to guess what might have caused the error, modify the
+input, and re-parse it repeatedly until either the input is compliant,
+or none of the rules can be applied to it.
 
 =item C::Tokenize
 
@@ -201,6 +193,20 @@ See the section L<JSON::Parse/SEE ALSO> for a comprehensive list of
 JSON modules on CPAN and more information about JSON itself.
 
 =head2 JSON-like formats
+
+It's very likely that a non-compliant JSON format cannot be handled by
+this module, because the changes that need to be made to put one
+variety of JSON-like format into strict JSON are incompatible with the
+changes that need to be made to fix another. For example, it is
+impossible to correctly convert the L</HJSON> format or the L</YAML>
+format into compliant JSON without breaking other parts of the
+module. Thus, no comprehensive solution is possible.
+
+Since it is unfeasible to meaningfully convert every possible list of
+bytes into compliant JSON, JSON::Repair should be regarded as an
+example which demonstrates the use of the diagnostics provided by the
+L</JSON::Parse> module to repair broken JSON inputs, rather than a
+general solution.
 
 =over
 
