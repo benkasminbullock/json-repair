@@ -13,7 +13,7 @@ use Carp;
 use 5.014;
 use JSON::Parse '0.49';
 use C::Tokenize '$comment_re';
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub repair_json
 {
@@ -106,7 +106,7 @@ sub repair_json
 		    $remaining = $bad_char . $remaining;
 		    if ($remaining =~ s/^($comment_re)//) {
 			if ($verbose) {
-			    print "Deleted comment $1.\n";
+			    print "Deleting comment '$1'.\n";
 			}
 			$output = $previous . $remaining;
 			next;
@@ -118,7 +118,7 @@ sub repair_json
 		    }
 		    if ($remaining =~ s/^(.*)\n//) {
 			if ($verbose) {
-			    print "Deleted comment $1.\n";
+			    print "Deleting comment '$1'.\n";
 			}
 			$output = $previous . $remaining;
 			next;
@@ -126,7 +126,7 @@ sub repair_json
 		}
 		if ($type eq 'initial state' && $previous !~ /^\s+$/) {
 		    if ($verbose) {
-			print "Deleted trailing garbage $remaining\n";
+			print "Trailing garbage '$bad_char$remaining'?\n";
 		    }
 		    $output = $previous;
 		    next;
@@ -172,6 +172,9 @@ sub repair_json
 	    if ($type eq 'string') {
 		if ($bad_byte < 0x20) {
 		    $bad_char = json_escape ($bad_char);
+		    if ($verbose) {
+			print "Changing $bad_byte into $bad_char.\n";
+		    }
 		    $output = $previous . $bad_char . $remaining;
 		    next;
 		}
@@ -184,6 +187,9 @@ sub repair_json
 	    # Delete a leading zero on a number.
 	    if ($type eq 'number') {
 		if ($previous =~ /0$/ && $remaining =~ /^[0-9]+/) {
+		    if ($verbose) {
+			print "Leading zero in number?\n";
+		    }
 		    $previous =~ s/0$//;
 		    $remaining =~ s/^0+//;
 		    $output = $previous . $bad_char . $remaining;
@@ -191,6 +197,9 @@ sub repair_json
 		    next;
 		}
 		if ($bad_char =~ /[eE]/ && $previous =~ /\.$/) {
+		    if ($verbose) {
+			print "Missing zero between . and e?\n";
+		    }
 		    $output = $previous . "0" . $bad_char . $remaining;
 		    next;
 		}

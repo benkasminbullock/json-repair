@@ -1,5 +1,9 @@
 Revision history for Perl module JSON::Repair
 
+0.06 2017-03-09
+
+- Extend the documentation
+
 0.05 2017-03-08
 
 - Delete trailing garbage after a valid input
