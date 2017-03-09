@@ -18,7 +18,7 @@ JSON::Repair - reformat JSON to strict compliance
 
 =head1 SYNOPSIS
 
-    use JSON::Repair 'repair_json';
+[% example("synopsis") %]
 
 =head1 VERSION
 
@@ -28,9 +28,24 @@ git commit L<[% commit.commit %]|[% repo %]/commit/[% commit.commit
 
 =head1 DESCRIPTION
 
-The module has some heuristics with which it tries to guess what kind
-of "relaxed" JSON might have been used and then convert those into
-strictly compliant JSON.
+Given some "relaxed" JSON text containing such things as trailing
+commas, comments, or strings containing tab characters or newlines,
+this module uses heuristics to convert these into strictly compliant
+JSON.
+
+It's very likely that a non-compliant JSON format cannot be handled by
+this module, or that the changes that need to be made to fix one
+variety of JSON-like format are incompatible with the changes that
+need to be made to fix another, no comprehensive solution is
+possible. For example, it would be impossible to make this module
+convert both L</HJSON> and L</YAML> into compliant JSON without
+breaking other parts of it.
+
+Since it is unfeasible to meaningfully convert every possible list of
+bytes into compliant JSON, this should be regarded as an example which
+demonstrates the use of the diagnostics provided by the L<JSON::Parse>
+module to repair broken JSON inputs, rather than a general solution
+covering all possible cases.
 
 =head1 FUNCTIONS
 
@@ -184,6 +199,22 @@ The script was added in version 0.02 of the module.
 
 See the section L<JSON::Parse/SEE ALSO> for a comprehensive list of
 JSON modules on CPAN and more information about JSON itself.
+
+=head2 JSON-like formats
+
+=over
+
+=item HJSON
+
+See L<http://hjson.org>. This format cannot be converted to strictly
+compliant JSON by this module.
+
+=item YAML
+
+See L<http://yaml.org>. This format cannot be converted to strictly
+compliant JSON by this module.
+
+=back
 
 =cut
 [% INCLUDE "author" %]

@@ -185,6 +185,7 @@ sub repair_json
 	    if ($type eq 'number') {
 		if ($previous =~ /0$/ && $remaining =~ /^[0-9]+/) {
 		    $previous =~ s/0$//;
+		    $remaining =~ s/^0+//;
 		    $output = $previous . $bad_char . $remaining;
 #		    print "$output\n";
 		    next;
