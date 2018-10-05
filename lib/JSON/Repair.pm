@@ -13,7 +13,7 @@ use Carp;
 use 5.014;
 use JSON::Parse '0.49';
 use C::Tokenize '$comment_re';
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub repair_json
 {
