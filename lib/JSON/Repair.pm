@@ -55,7 +55,6 @@ sub repair_json
 	    # Everything after the bad byte.
 	    my $remaining = substr ($output, $bad_pos);
 	    if ($bad_char eq "'" && $valid_bytes->[ord ('"')]) {
-		my $string;
 		# Substitute a ' in the remaining stuff, if there is
 		# one, up to a comma or colon or an end-of marker.
 		if ($remaining =~ s/^([^,:\]\}]*)'(\s*[,:\]\}])/$1"$2/) {
