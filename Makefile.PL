@@ -13,6 +13,7 @@ WriteMakefile (
     AUTHOR => 'Ben Bullock <bkb@cpan.org>',
     LICENSE => 'perl',
     PREREQ_PM => {
+	'Carp' => '0',
 	'JSON::Parse' => '0.48',
 	'C::Tokenize' => '0.11',
     },
