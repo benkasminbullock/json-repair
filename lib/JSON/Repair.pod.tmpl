@@ -14,7 +14,7 @@ produces output
 
 =head1 NAME
 
-JSON::Repair - reformat JSON to strict compliance
+[% info.colon %] - reformat JSON to strict compliance
 
 =head1 SYNOPSIS
 
@@ -22,7 +22,7 @@ JSON::Repair - reformat JSON to strict compliance
 
 =head1 VERSION
 
-This documents version [% version %] of JSON::Repair corresponding to
+This documents version [% version %] of [% info.colon %] corresponding to
 git commit L<[% commit.commit %]|[% repo %]/commit/[% commit.commit
 %]> released on [% commit.date %].
 
@@ -31,7 +31,10 @@ git commit L<[% commit.commit %]|[% repo %]/commit/[% commit.commit
 Given some "relaxed" JSON text containing such things as trailing
 commas, comments, or strings containing tab characters or newlines,
 this module uses heuristics to convert these into strictly compliant
-JSON.
+JSON. 
+
+[% info.colon %] is an example of the use of the machine-readable
+error messages in L<JSON::Parse>.
 
 =head1 FUNCTIONS
 
@@ -91,12 +94,12 @@ regexes.
 
 JSON does not allow various kinds of numbers, such as decimals without
 a leading zero, like .123, decimals with an exponent but without a
-fraction, like 1.e9, or integers with a leading zero. JSON::Repair
+fraction, like 1.e9, or integers with a leading zero. [% info.colon %]
 adds or removes digits to make them parseable.
 
 [% example('numbers') %]
 
-JSON::Repair strips leading zeros like 0123 without converting the
+[% info.colon %] strips leading zeros like 0123 without converting the
 result to octal (base 8). It doesn't attempt to repair hexadecimal
 (base 16) numbers.
 
@@ -144,7 +147,7 @@ Here is the output of the synopsis run with the C<verbose> option:
 
 L</repair_json> is exported on demand. The tag ":all" exports all functions.
 
-    use JSON::Repair ':all';
+    use [% info.colon %] ':all';
 
 =head1 DEPENDENCIES
 
@@ -153,8 +156,8 @@ L</repair_json> is exported on demand. The tag ":all" exports all functions.
 =item JSON::Parse
 
 This module relies on L<JSON::Parse/diagnostics_hash> to find the
-errors in the input. Most of the work of JSON::Repair is actually done
-by JSON::Parse's diagnostics, and then JSON::Repair applies a few
+errors in the input. Most of the work of [% info.colon %] is actually done
+by JSON::Parse's diagnostics, and then [% info.colon %] applies a few
 heuristic rules to guess what might have caused the error, modify the
 input, and re-parse it repeatedly until either the input is compliant,
 or none of the rules can be applied to it.
@@ -203,7 +206,7 @@ format into compliant JSON without breaking other parts of the
 module. Thus, no comprehensive solution is possible.
 
 Since it is unfeasible to meaningfully convert every possible list of
-bytes into compliant JSON, JSON::Repair should be regarded as an
+bytes into compliant JSON, [% info.colon %] should be regarded as an
 example which demonstrates the use of the diagnostics provided by the
 L</JSON::Parse> module to repair broken JSON inputs, rather than a
 general solution.

@@ -21,9 +21,8 @@ my %pbv = (
 );
 #my $version = get_version (%pbv);
 my $commit = get_commit (%pbv);
-my $info = get_info (%pbv);
+my $info = get_info (%pbv, verbose => $verbose);
 # Names of the input and output files containing the documentation.
-
 my $pod = 'Repair.pod';
 my $input = "$Bin/lib/JSON/$pod.tmpl";
 my $output = "$Bin/lib/JSON/$pod";
@@ -34,6 +33,7 @@ my %vars = (
     version => $info->{version},
     commit => $commit,
     repo => $info->{repo},
+    info => $info,
 );
 
 my $tt = Template->new (
