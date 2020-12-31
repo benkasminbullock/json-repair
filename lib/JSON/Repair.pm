@@ -11,7 +11,7 @@ use Carp;
 # JSON::Parse.
 
 use 5.014;
-use JSON::Parse '0.49';
+use JSON::Parse '0.57';
 use C::Tokenize '$comment_re';
 our $VERSION = '0.07';
 
@@ -107,6 +107,11 @@ sub repair_json
 			if ($verbose) {
 			    print "Deleting comment '$1'.\n";
 			}
+			if ($previous =~ s/\h+$//) {
+			    if ($verbose) {
+				print "Also removed whitespace before comment.\n";
+			    }
+			}
 			$output = $previous . $remaining;
 			next;
 		    }
@@ -155,6 +160,13 @@ sub repair_json
 			print "Adding quotes to key '$bad_char$1'\n";
 		    }
 		    $output = $previous . '"' . $bad_char . $remaining;
+		    # For strings missing quotes like <a :>, use <"a" :>
+		    # rather than <"a ":>
+		    if ($output =~ s/(\s+)"[:,]/"$1:/g) {
+			if ($verbose) {
+			    print "Moved whitespace '$1' before \" to after \"";
+			}
+		    }
 		    next;
 		}
 		if ($previous =~ /:\s*$/) {
@@ -172,7 +184,8 @@ sub repair_json
 		if ($bad_byte < 0x20) {
 		    $bad_char = json_escape ($bad_char);
 		    if ($verbose) {
-			print "Changing $bad_byte into $bad_char.\n";
+			printf "Changing bad byte %X into $bad_char.\n",
+			    ord ($bad_byte);
 		    }
 		    $output = $previous . $bad_char . $remaining;
 		    next;
@@ -180,6 +193,9 @@ sub repair_json
 	    }
 	    # Add a zero to a fraction
 	    if ($bad_char eq '.' && $remaining =~ /^[0-9]+/) {
+		if ($verbose) {
+		    print "Missing zero before a fraction?\n";
+		}
 		$output = $previous . "0." . $remaining;
 		next;
 	    }

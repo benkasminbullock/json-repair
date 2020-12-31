@@ -14,7 +14,7 @@ WriteMakefile (
     LICENSE => 'perl',
     PREREQ_PM => {
 	'Carp' => '0',
-	'JSON::Parse' => '0.48',
+	'JSON::Parse' => '0.57',
 	'C::Tokenize' => '0.11',
     },
     META_MERGE => {
