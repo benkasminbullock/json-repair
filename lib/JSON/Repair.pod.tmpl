@@ -1,6 +1,6 @@
 [% start_year=2016 %]
 [% MACRO example(file) BLOCK %]
-[%- pl =  file _ ".pl" -%]
+[%- pl = file _ ".pl" -%]
 [%- out = file _ "-out.txt" -%]
 [% INCLUDE $pl | xtidy %]
 
@@ -92,15 +92,17 @@ regexes.
 
 =item Sort out broken numbers
 
-JSON does not allow various kinds of numbers, such as decimals without
-a leading zero, like .123, decimals with an exponent but without a
-fraction, like 1.e9, or integers with a leading zero. [% info.colon %]
-adds or removes digits to make them parseable.
+JSON does not allow various kinds of numbers, such as decimals less
+than one without a leading zero, such as C<.123> (should be C<0.123>),
+decimals with an exponent but without a fraction, such as C<1.e9>
+(should be C<1.0e9>), or integers with a leading zero, such as C<0123>
+(should be C<123>). [% info.colon %] adds or removes digits to make
+them parseable.
 
 [% example('numbers') %]
 
-[% info.colon %] strips leading zeros like 0123 without converting the
-result to octal (base 8). It doesn't attempt to repair hexadecimal
+[% info.colon %] strips leading zeros as in C<0123> without converting
+the result to octal (base 8). It doesn't attempt to repair hexadecimal
 (base 16) numbers.
 
 The facility to reinterpret numbers was added in version 0.02 of the
@@ -173,8 +175,9 @@ L<Carp> is used to report errors.
 =item Perl 5.14
 
 Unfortunately L<JSON::Parse/diagnostics_hash> is only available for
-Perl 5.14 or later, because it relies on L<perlapi/croak_sv>, which
-was introduced in Perl 5.14. I'm not sure if there is a way to get the
+Perl 5.14 or later, because it relies on L<croak_sv in
+perlapi|https://perldoc.perl.org/perlapi#croak_sv>, which was
+introduced in Perl 5.14. I'm not sure if there is a way to get the
 same behaviour with earlier versions of Perl.
 
 =back

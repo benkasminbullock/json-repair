@@ -11,9 +11,10 @@ use Carp;
 # JSON::Parse.
 
 use 5.014;
-use JSON::Parse '0.57';
+use JSON::Parse '0.58';
 use C::Tokenize '$comment_re';
-our $VERSION = '0.07';
+
+our $VERSION = '0.08';
 
 sub repair_json
 {
@@ -107,11 +108,7 @@ sub repair_json
 			if ($verbose) {
 			    print "Deleting comment '$1'.\n";
 			}
-			if ($previous =~ s/\h+$//) {
-			    if ($verbose) {
-				print "Also removed whitespace before comment.\n";
-			    }
-			}
+			rm_trailing_h (\$previous, $verbose);
 			$output = $previous . $remaining;
 			next;
 		    }
@@ -124,6 +121,7 @@ sub repair_json
 			if ($verbose) {
 			    print "Deleting comment '$1'.\n";
 			}
+			rm_trailing_h (\$previous, $verbose);
 			$output = $previous . $remaining;
 			next;
 		    }
@@ -299,6 +297,18 @@ sub json_escape
     $input =~ s/\t/\\t/g;
     $input =~ s/([\x00-\x1f])/sprintf ("\\u%04x", ord ($1))/ge;
     return $input;
+}
+
+sub rm_trailing_h
+{
+    my ($previous_ref, $verbose) = @_;
+    my $previous = $$previous_ref;
+    if ($previous =~ s/\h+$//) {
+	if ($verbose) {
+	    print "Also removed whitespace before comment.\n";
+	}
+    }
+    $$previous_ref = $previous;
 }
 
 1;
