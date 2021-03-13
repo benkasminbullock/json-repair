@@ -11,7 +11,8 @@ use Carp;
 # JSON::Parse.
 
 use 5.014;
-use JSON::Parse '0.58';
+
+use JSON::Parse '0.61';
 use C::Tokenize '$comment_re';
 
 our $VERSION = '0.08';
@@ -24,7 +25,12 @@ sub repair_json
     $jp->diagnostics_hash (1);
     my $verbose = $options{verbose};
     my $output = $broken;
+    my $pass = 0;
     while (1) {
+	$pass++;
+	if ($verbose) {
+	    print "Pass $pass:\n";
+	}
 	# Try various repairs.  This continues until the JSON is
 	# valid, or none of the repairs have worked. After a
 	# successful repair, "next;" should be used. Falling through
@@ -34,7 +40,13 @@ sub repair_json
 	    $jp->check ($output);
 	};
 	if (! $@) {
+	    if ($verbose) {
+		print "Processing finished with no errors.\n";
+	    }
 	    last;
+	}
+	if (ref $@ ne 'HASH') {
+	    die "$@";
 	}
 	my $error = $@->{error};
 	#	    print STDERR "$error\n";
@@ -126,9 +138,11 @@ sub repair_json
 			next;
 		    }
 		}
-		if ($type eq 'initial state' && $previous !~ /^\s+$/) {
+		if ($type eq 'initial state' &&
+		    $previous !~ /^\s+$/ && 
+		    $bad_pos > 0) {
 		    if ($verbose) {
-			print "Trailing garbage '$bad_char$remaining'?\n";
+			print "Trailing garbage '$bad_char' at $bad_pos?\n";
 		    }
 		    $output = $previous;
 		    next;
@@ -206,7 +220,6 @@ sub repair_json
 		    $previous =~ s/0$//;
 		    $remaining =~ s/^0+//;
 		    $output = $previous . $bad_char . $remaining;
-#		    print "$output\n";
 		    next;
 		}
 		if ($bad_char =~ /[eE]/ && $previous =~ /\.$/) {
@@ -217,7 +230,6 @@ sub repair_json
 		    next;
 		}
 	    }
-#	    print "$output\n";
 	    warn "Could not handle unexpected character '$bad_char' in $type\n";
 	    if ($verbose) {
 		print_valid_bytes ($valid_bytes);
